@@ -1,0 +1,12 @@
+.git
+.gitignore
+node_modules/
+.env
+.env.*
+*.log
+.vscode/
+.idea/
+*.md
+.editorconfig
+.gitattributes
+Dockerfile
