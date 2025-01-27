@@ -5,6 +5,6 @@
 		}
 	],
 	"settings": {
-		"CodeGPT.apiKey": "CodeGPT Plus Beta"
+		"CodeGPT.apiKey": "OpenAI"
 	}
 }
