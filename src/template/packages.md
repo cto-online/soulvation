@@ -1,0 +1,9 @@
+The Matdash Vue.js Admin Template includes several subfolders in its package, each serving specific purposes to support different layout styles, themes, and configurations. Here’s an explanation of the subfolders:
+	•	dark: This folder contains files and configurations for the dark theme of the admin template. It allows users to switch to a dark mode interface by applying specific CSS and JavaScript settings.
+	•	default: This folder holds the standard layout and theme files for the admin template. It represents the basic configuration without additional modifications like dark mode or RTL (Right-to-Left) support.
+	•	horizontal: This folder is designed for a horizontal navigation layout, where the menu bar is positioned at the top of the page instead of the sidebar.
+	•	main: The main folder includes core files for the template, such as HTML, CSS, JavaScript, and SCSS files. It serves as the base structure for all other variations.
+	•	minisidebar: This folder contains configurations for a compact sidebar layout. The sidebar is minimized to save screen space while still providing access to navigation links.
+	•	rtl: This folder supports Right-to-Left (RTL) languages like Arabic or Hebrew. It includes specific styles and configurations to render the interface correctly for RTL text direction.
+	•	starterkit: The starter kit folder provides a minimal setup with essential files to help developers quickly begin customizing the template without unnecessary overhead.
+Each of these folders is tailored to meet different design preferences and functional requirements, making the Matdash Vue.js Admin Template highly versatile and customizable.
