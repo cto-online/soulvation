@@ -7,10 +7,15 @@
   packages = [
     pkgs.nodejs_20
     pkgs.docker
+    pkgs.docker-compose
+    pkgs.sudo
   ];
   services.docker.enable = true;
   # Sets environment variables in the workspace
-  env = {};
+  env = {
+    VITE_PORT = "4000";
+    VITE_HMR_PORT = "4001";
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
@@ -24,14 +29,21 @@
         default.openFiles = [ "src/App.vue" ];
       };
       # To run something each time the workspace is (re)started, use the `onStart` hook
+      onStart = {
+        start-docker = "sudo service docker start";
+      };
     };
     # Enable previews and customize configuration
     previews = {
       enable = true;
       previews = {
         web = {
-          command = ["npm" "run" "dev" "--" "--port" "$PORT" "--host" "0.0.0.0"];
+          command = ["npm" "run" "dev" "--" "--port" "4000" "--host" "0.0.0.0"];
           manager = "web";
+          env = {
+            VITE_PORT = "4000";
+            VITE_HMR_PORT = "4001";
+          };
         };
       };
     };
