@@ -1,68 +1,78 @@
 <script setup lang="ts">
 import BaseLayout from './layouts/BaseLayout.vue'
-import HelloWorld from './components/HelloWorld.vue'
+import WelcomeCard from './components/dashboards/dashboard1/WelcomeCard.vue'
+import CustomerCard from './components/dashboards/dashboard1/CustomerCard.vue'
+import ProjectCard from './components/dashboards/dashboard1/ProjectCard.vue'
+import RevenueForcast from './components/dashboards/dashboard1/RevenueForcast.vue'
+import Performence from './components/dashboards/dashboard1/Performence.vue'
+import CustomerChart from './components/dashboards/dashboard1/CustomerChart.vue'
+import SalesOverview from './components/dashboards/dashboard1/SalesOverview.vue'
+import RevenueProducts from './components/dashboards/dashboard1/RevenueProducts.vue'
+import TotalSettelment from './components/dashboards/dashboard1/TotalSettelment.vue'
+import SnackBar from './components/dashboards/snackbar.vue'
 </script>
 
 <template>
-  <BaseLayout>
-    <div class="content">
-      <div class="logos">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://vuejs.org/" target="_blank">
-          <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-        </a>
-      </div>
-      <HelloWorld msg="Vite + Vue with Matdash Layouts" />
-    </div>
-  </BaseLayout>
+  <v-app>
+    <BaseLayout>
+      <SnackBar />
+      <v-container fluid class="page-wrapper">
+        <v-row>
+          <!-- Welcome Cards -->
+          <v-col cols="12" lg="5">
+            <v-row>
+              <v-col cols="12">
+                <WelcomeCard />
+              </v-col>
+              <v-col cols="12" md="6">
+                <CustomerCard />
+              </v-col>
+              <v-col cols="12" md="6">
+                <ProjectCard />
+              </v-col>
+            </v-row>
+          </v-col>
+          <!-- Revenue Forecast -->
+          <v-col cols="12" lg="7">
+            <RevenueForcast />
+          </v-col>
+
+          <!-- Your Performance -->
+          <v-col cols="12" lg="5">
+            <Performence />
+          </v-col>
+          <!-- Customers / Sales Overview -->
+          <v-col cols="12" lg="7">
+            <v-row>
+              <v-col cols="12" md="6">
+                <CustomerChart />
+              </v-col>
+              <v-col cols="12" md="6">
+                <SalesOverview />
+              </v-col>
+            </v-row>
+          </v-col>
+          <!-- Revenue by Product / Total settlements -->
+          <v-col cols="12" lg="8">
+            <RevenueProducts />
+          </v-col>
+          <v-col cols="12" lg="4">
+            <TotalSettelment />
+          </v-col>
+        </v-row>
+      </v-container>
+    </BaseLayout>
+  </v-app>
 </template>
 
 <style>
+.page-wrapper {
+  padding: 24px;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-}
-
-.content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logos {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-
-.theme-dark .logo {
-  filter: invert(1);
-}
-
-.theme-dark .logo:hover {
-  filter: invert(1) drop-shadow(0 0 2em #646cffaa);
-}
-
-.theme-dark .logo.vue:hover {
-  filter: invert(1) drop-shadow(0 0 2em #42b883aa);
 }
 </style>

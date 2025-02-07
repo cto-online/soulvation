@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -11,17 +11,11 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.0',
-    port: parseInt(process.env.VITE_PORT || '4000'),
-    strictPort: true,
-    hmr: {
-      protocol: 'ws',
-      host: '0.0.0.0',
-      port: parseInt(process.env.VITE_HMR_PORT || '4001'),
-      clientPort: parseInt(process.env.VITE_HMR_PORT || '4001')
-    },
-    watch: {
-      usePolling: true
-    }
+    port: 3000,
+    strictPort: true // Fail if port 3000 is not available
+  },
+  preview: {
+    port: 5000,
+    strictPort: true // Fail if port 5000 is not available for production preview
   }
 })

@@ -6,9 +6,8 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.nodejs_20
-    pkgs.docker
-    pkgs.docker-compose
     pkgs.sudo
+    pkgs.unzip
   ];
   services.docker.enable = true;
   # Sets environment variables in the workspace
