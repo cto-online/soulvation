@@ -15,6 +15,15 @@ export default createVuetify({
           textPrimary: '#2A3547',
         },
       },
+      dark: {
+        colors: {
+          primary: '#5D87FF',
+          secondary: '#49BEFF',
+          accent: '#0d6efd',
+          surface: '#1a1a1a',
+          textPrimary: '#FFFFFF',
+        },
+      },
     },
   },
 })

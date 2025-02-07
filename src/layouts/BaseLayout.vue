@@ -1,106 +1,117 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
+import { useTheme } from 'vuetify'
 
 const store = useLayoutStore()
+const theme = useTheme()
+
+// Sync layout store theme with Vuetify theme
+watch(() => store.isDark, (newValue) => {
+  theme.global.name.value = newValue ? 'dark' : 'light'
+})
 
 const layoutClass = computed(() => ({
   'layout-horizontal': store.layoutType === 'horizontal',
   'layout-vertical': store.layoutType === 'vertical',
-  'layout-mini': store.sidebarType === 'mini',
-  'theme-dark': store.isDark
+  'layout-mini': store.sidebarType === 'mini'
 }))
 </script>
 
 <template>
-  <div class="app-layout" :class="layoutClass">
-    <!-- Layout Controls -->
-    <div class="layout-controls">
-      <button @click="store.toggleLayout">
-        {{ store.layoutType === 'horizontal' ? 'Switch to Vertical' : 'Switch to Horizontal' }}
-      </button>
-      <button @click="store.toggleSidebar" v-if="store.layoutType === 'vertical'">
-        {{ store.sidebarType === 'mini' ? 'Expand Sidebar' : 'Collapse Sidebar' }}
-      </button>
-      <button @click="store.toggleTheme">
-        {{ store.isDark ? 'Light Mode' : 'Dark Mode' }}
-      </button>
-    </div>
+  <v-app :theme="store.isDark ? 'dark' : 'light'">
+    <!-- Navigation Drawer for Vertical Layout -->
+    <v-navigation-drawer
+      v-if="store.layoutType === 'vertical'"
+      v-model="store.sidebarType"
+      :rail="store.sidebarType === 'mini'"
+      :permanent="true"
+      :width="240"
+      :rail-width="64"
+    >
+      <v-list>
+        <v-list-item>
+          <v-btn
+            block
+            @click="store.toggleSidebar"
+            :icon="store.sidebarType === 'mini' ? 'mdi-menu-open' : 'mdi-menu'"
+            variant="text"
+          />
+        </v-list-item>
+        
+        <v-list-item>
+          <v-btn
+            block
+            @click="store.toggleLayout"
+            :prepend-icon="store.layoutType === 'horizontal' ? 'mdi-view-sequential' : 'mdi-view-parallel'"
+            variant="text"
+          >
+            {{ store.sidebarType === 'mini' ? '' : (store.layoutType === 'horizontal' ? 'Vertical' : 'Horizontal') }}
+          </v-btn>
+        </v-list-item>
+        
+        <v-list-item>
+          <v-btn
+            block
+            @click="store.toggleTheme"
+            :prepend-icon="store.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+            variant="text"
+          >
+            {{ store.sidebarType === 'mini' ? '' : (store.isDark ? 'Light' : 'Dark') }}
+          </v-btn>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <!-- App Bar for Horizontal Layout -->
+    <v-app-bar
+      v-if="store.layoutType === 'horizontal'"
+      :elevation="1"
+    >
+      <v-container class="d-flex align-center">
+        <v-btn
+          @click="store.toggleLayout"
+          :icon="store.layoutType === 'horizontal' ? 'mdi-view-sequential' : 'mdi-view-parallel'"
+          variant="text"
+        />
+        
+        <v-btn
+          @click="store.toggleTheme"
+          :icon="store.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+          variant="text"
+        />
+        
+        <v-spacer />
+      </v-container>
+    </v-app-bar>
 
     <!-- Main Content -->
-    <div class="layout-content">
-      <slot></slot>
-    </div>
-  </div>
+    <v-main>
+      <v-container fluid class="fill-height">
+        <slot></slot>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <style lang="scss">
-.app-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-
-  &.theme-dark {
-    background-color: #1a1a1a;
-    color: #ffffff;
-  }
-
-  &.layout-horizontal {
-    .layout-controls {
-      flex-direction: row;
-      justify-content: flex-end;
-      padding: 1rem;
-    }
-  }
-
-  &.layout-vertical {
-    flex-direction: row;
-
-    .layout-controls {
-      flex-direction: column;
-      padding: 1rem;
-      border-right: 1px solid #ddd;
-      
-      .theme-dark & {
-        border-color: #333;
-      }
-    }
-
-    &.layout-mini .layout-controls {
-      width: 64px;
-    }
+.v-navigation-drawer {
+  .v-btn {
+    justify-content: start;
+    padding-left: 16px;
   }
 }
 
-.layout-controls {
-  display: flex;
-  gap: 0.5rem;
-
-  button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    white-space: nowrap;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .theme-dark & {
-      border-color: #333;
-      color: #fff;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
+// Responsive adjustments
+@media (max-width: 600px) {
+  .v-navigation-drawer {
+    width: 100% !important;
+  }
+  
+  .v-app-bar {
+    .v-container {
+      padding: 0 8px;
     }
   }
-}
-
-.layout-content {
-  flex: 1;
-  padding: 1rem;
 }
 </style>

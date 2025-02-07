@@ -9,13 +9,12 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-  },
-  server: {
-    port: 3000,
-    strictPort: true // Fail if port 3000 is not available
-  },
-  preview: {
-    port: 5000,
-    strictPort: true // Fail if port 5000 is not available for production preview
+  }, 
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "@/styles/variables.scss";`
+      }
+    }
   }
 })

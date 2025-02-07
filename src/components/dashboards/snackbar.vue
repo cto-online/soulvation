@@ -1,17 +1,36 @@
-<script setup lang="ts">
+<script>
 import { ref } from 'vue';
+import { InfoCircleIcon, XIcon } from 'vue-tabler-icons';
+export default {
+    setup() {
+        const showSnackbar = ref(false);
+        const close = () => {
+            showSnackbar.value = false;
+        };
 
-const snackbar = ref(true);
-const timeout = ref(2000);
+        setTimeout(() => {
+            showSnackbar.value = true;
+        }, 1500); // Adjust the delay in milliseconds (here 3 seconds)
+
+        return {
+            showSnackbar,
+            close
+        };
+    }
+};
 </script>
 
 <template>
-    <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
-        color="success"
-        location="top"
-    >
-        Welcome to your dashboard!
+    <v-snackbar rounded="md" color="primary" class="mt-n3" v-model="showSnackbar" location="top right" elevation="0">
+        <div class="d-flex gap-2">
+            <InfoCircleIcon size="22" />
+            <div class="">
+                <h5 class="text-body-1">Welcome to MatDash</h5>
+                <p class="text-12">Easy to costomize the Template!!!</p>
+            </div>
+        </div>
+        <template v-slot:actions>
+            <v-btn variant="text" @click="showSnackbar = false"> <XIcon /> </v-btn>
+        </template>
     </v-snackbar>
 </template>

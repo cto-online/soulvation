@@ -1,44 +1,261 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { Icon } from '@iconify/vue';
+import { useTheme } from 'vuetify';
 
-const monthlyData = [
-    { month: 'Jan', value: 78, color: 'primary' },
-    { month: 'Feb', value: 65, color: 'secondary' },
-    { month: 'Mar', value: 85, color: 'success' },
-    { month: 'Apr', value: 45, color: 'warning' },
-    { month: 'May', value: 92, color: 'error' },
-    { month: 'Jun', value: 58, color: 'info' }
-];
+interface YearlyData {
+  year: number;
+  data: number[];
+  color: string;
+}
+
+interface ChartData {
+  years: YearlyData[];
+  months: string[];
+}
+
+interface Props {
+  data?: ChartData;
+  loading?: boolean;
+}
+
+const theme = useTheme();
+const chartError = ref<string | null>(null);
+
+const props = withDefaults(defineProps<Props>(), {
+  data: () => ({
+    years: [
+      {
+        year: 2024,
+        data: [100, 75, 80, 40, 20, 40, 0, 25],
+        color: theme.current.value.colors.primary
+      },
+      {
+        year: 2023,
+        data: [50, 60, 30, 55, 75, 60, 100, 120],
+        color: theme.current.value.colors.error
+      },
+      {
+        year: 2022,
+        data: [35, 45, 40, 50, 35, 55, 40, 45],
+        color: theme.current.value.colors.secondary
+      }
+    ],
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
+  }),
+  loading: false
+})
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
+
+/* Chart Configuration */
+const areachartOptions = computed(() => ({
+  chart: {
+    toolbar: {
+      show: false
+    },
+    type: 'area',
+    fontFamily: 'inherit',
+    foreColor: theme.current.value.colors.textPrimary,
+    height: 290,
+    width: '100%',
+    stacked: false,
+    events: {
+      error: function(e: Error) {
+        chartError.value = e.message;
+      }
+    }
+  },
+  colors: props.data.years.map(year => year.color),
+  dataLabels: {
+    enabled: false
+  },
+  legend: {
+    show: false
+  },
+  stroke: {
+    width: 2,
+    curve: 'monotoneCubic'
+  },
+  grid: {
+    show: true,
+    borderColor: theme.current.value.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+    padding: {
+      top: 0,
+      bottom: 0
+    },
+    xaxis: {
+      lines: {
+        show: true
+      }
+    },
+    yaxis: {
+      lines: {
+        show: true
+      }
+    }
+  },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 0,
+      inverseColors: false,
+      opacityFrom: 0.2,
+      opacityTo: 0.9,
+      stops: [100]
+    }
+  },
+  xaxis: {
+    categories: props.data.months,
+    axisBorder: {
+      show: false
+    },
+    axisTicks: {
+      show: false
+    },
+    labels: {
+      style: {
+        colors: theme.current.value.colors.textPrimary
+      }
+    }
+  },
+  yaxis: {
+    labels: {
+      formatter: (value: number) => currencyFormatter.format(value * 1000),
+      style: {
+        colors: theme.current.value.colors.textPrimary
+      }
+    }
+  },
+  markers: {
+    strokeColors: props.data.years.map(year => year.color),
+    strokeWidth: 2
+  },
+  tooltip: {
+    theme: theme.current.value.dark ? 'dark' : 'light',
+    y: {
+      formatter: (value: number) => currencyFormatter.format(value * 1000)
+    }
+  }
+}));
+
+const chartSeries = computed(() => 
+  props.data.years.map(year => ({
+    name: year.year.toString(),
+    data: year.data
+  }))
+);
 </script>
 
 <template>
-    <v-card elevation="10">
-        <v-card-item>
-            <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                    <div class="text-h5 font-weight-bold">Revenue Forecast</div>
-                    <div class="text-subtitle-1 text-medium-emphasis">Monthly Revenue Overview</div>
-                </div>
-                <div class="text-h6 text-success">
-                    <Icon icon="solar:arrow-up-outline" class="mr-1" />
-                    +12%
-                </div>
-            </div>
+  <v-card
+    elevation="10"
+    class="revenue-forecast"
+    :loading="props.loading"
+    :aria-label="'Revenue forecast comparison between years ' + props.data.years.map(y => y.year).join(', ')"
+  >
+    <v-card-item>
+      <!-- Header -->
+      <div class="d-flex flex-column flex-md-row justify-space-between align-md-center gap-4 mb-6">
+        <!-- Title Section -->
+        <div class="d-flex gap-3 align-center">
+          <v-avatar
+            size="48"
+            class="rounded-md bg-primary-lighten-4"
+            aria-hidden="true"
+          >
+            <Icon
+              icon="solar:layers-linear"
+              class="text-primary"
+              :height="25"
+            />
+          </v-avatar>
+          <div>
+            <h2 class="text-h5 mb-1">Revenue Forecast</h2>
+            <span class="text-subtitle-1 text-medium-emphasis">
+              Overview of Profit
+            </span>
+          </div>
+        </div>
 
-            <div class="mt-4">
-                <div v-for="(item, index) in monthlyData" :key="index" class="mb-4">
-                    <div class="d-flex align-center justify-space-between mb-1">
-                        <div class="text-subtitle-1">{{ item.month }}</div>
-                        <div class="text-subtitle-1">{{ item.value }}%</div>
-                    </div>
-                    <v-progress-linear
-                        :model-value="item.value"
-                        height="8"
-                        rounded
-                        :color="item.color"
-                    ></v-progress-linear>
-                </div>
-            </div>
-        </v-card-item>
-    </v-card>
+        <!-- Legend -->
+        <div class="d-flex flex-wrap gap-4">
+          <div
+            v-for="year in props.data.years"
+            :key="year.year"
+            class="d-flex align-center gap-2"
+          >
+            <v-avatar
+              :color="year.color"
+              size="8"
+              class="rounded-circle"
+              aria-hidden="true"
+            ></v-avatar>
+            <span class="text-medium-emphasis">{{ year.year }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <v-fade-transition>
+          <div v-if="chartError" class="text-error text-caption">
+            {{ chartError }}
+          </div>
+          <apexchart
+            v-else
+            type="area"
+            height="290"
+            :options="areachartOptions"
+            :series="chartSeries"
+          />
+        </v-fade-transition>
+      </div>
+    </v-card-item>
+
+    <!-- Loading Overlay -->
+    <template v-slot:loader>
+      <v-progress-linear
+        color="primary"
+        height="3"
+        indeterminate
+      ></v-progress-linear>
+    </template>
+  </v-card>
 </template>
+
+<style lang="scss" scoped>
+.revenue-forecast {
+  border-radius: 12px;
+  
+  :deep(.v-card-item) {
+    padding: 24px;
+  }
+
+  .chart-container {
+    margin: 0 -16px;
+    
+    :deep(.apexcharts-text) {
+      fill: currentColor !important;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .revenue-forecast {
+    :deep(.v-card-item) {
+      padding: 16px;
+    }
+    
+    .text-h5 {
+      font-size: 1.25rem !important;
+    }
+  }
+}
+</style>

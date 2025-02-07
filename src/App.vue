@@ -1,78 +1,36 @@
 <script setup lang="ts">
-import BaseLayout from './layouts/BaseLayout.vue'
-import WelcomeCard from './components/dashboards/dashboard1/WelcomeCard.vue'
-import CustomerCard from './components/dashboards/dashboard1/CustomerCard.vue'
-import ProjectCard from './components/dashboards/dashboard1/ProjectCard.vue'
-import RevenueForcast from './components/dashboards/dashboard1/RevenueForcast.vue'
-import Performence from './components/dashboards/dashboard1/Performence.vue'
-import CustomerChart from './components/dashboards/dashboard1/CustomerChart.vue'
-import SalesOverview from './components/dashboards/dashboard1/SalesOverview.vue'
-import RevenueProducts from './components/dashboards/dashboard1/RevenueProducts.vue'
-import TotalSettelment from './components/dashboards/dashboard1/TotalSettelment.vue'
-import SnackBar from './components/dashboards/snackbar.vue'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
+
+// Initialize theme based on system preference
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  theme.global.name.value = 'dark'
+}
 </script>
 
 <template>
   <v-app>
-    <BaseLayout>
-      <SnackBar />
-      <v-container fluid class="page-wrapper">
-        <v-row>
-          <!-- Welcome Cards -->
-          <v-col cols="12" lg="5">
-            <v-row>
-              <v-col cols="12">
-                <WelcomeCard />
-              </v-col>
-              <v-col cols="12" md="6">
-                <CustomerCard />
-              </v-col>
-              <v-col cols="12" md="6">
-                <ProjectCard />
-              </v-col>
-            </v-row>
-          </v-col>
-          <!-- Revenue Forecast -->
-          <v-col cols="12" lg="7">
-            <RevenueForcast />
-          </v-col>
-
-          <!-- Your Performance -->
-          <v-col cols="12" lg="5">
-            <Performence />
-          </v-col>
-          <!-- Customers / Sales Overview -->
-          <v-col cols="12" lg="7">
-            <v-row>
-              <v-col cols="12" md="6">
-                <CustomerChart />
-              </v-col>
-              <v-col cols="12" md="6">
-                <SalesOverview />
-              </v-col>
-            </v-row>
-          </v-col>
-          <!-- Revenue by Product / Total settlements -->
-          <v-col cols="12" lg="8">
-            <RevenueProducts />
-          </v-col>
-          <v-col cols="12" lg="4">
-            <TotalSettelment />
-          </v-col>
-        </v-row>
-      </v-container>
-    </BaseLayout>
+    <router-view />
   </v-app>
 </template>
 
 <style>
-.page-wrapper {
-  padding: 24px;
+:root {
+  --v-theme-primary: #5D87FF;
+  --v-theme-secondary: #49BEFF;
+  --v-theme-accent: #0d6efd;
 }
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+.v-application {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .v-container {
+    padding: 12px !important;
+  }
 }
 </style>
