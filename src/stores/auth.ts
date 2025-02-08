@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import router from '@/router';
-import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-import type { ApiResponse, ErrorResponse } from '@/utils/helpers/fetch-wrapper';
+import { authService } from '@/services/auth/authService';
+import type { ApiError } from '@/services/api/types';
 
 // Types
 export interface User {
@@ -17,114 +17,82 @@ export interface LoginCredentials {
     password: string;
 }
 
-interface AuthState {
-    user: User | null;
-    returnUrl: string | null;
-    loading: boolean;
-    error: string | null;
-}
-
-const AUTH_STORAGE_KEY = 'auth_state';
-
-// Helper functions
-const getStoredAuth = (): Partial<AuthState> => {
-    try {
-        const stored = sessionStorage.getItem(AUTH_STORAGE_KEY);
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            // Check token expiration
-            if (parsed.user?.tokenExpires && parsed.user.tokenExpires < Date.now()) {
-                sessionStorage.removeItem(AUTH_STORAGE_KEY);
-                return {};
-            }
-            return parsed;
-        }
-    } catch (error) {
-        console.error('Error parsing stored auth:', error);
-    }
-    return {};
-};
-
-const setStoredAuth = (state: Partial<AuthState>) => {
-    try {
-        sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-        console.error('Error storing auth:', error);
-    }
-};
-
-export const useAuthStore = defineStore({
-    id: 'auth',
-    
-    state: (): AuthState => ({
-        user: getStoredAuth().user || null,
-        returnUrl: null,
+export const useAuthStore = defineStore('auth', () => {
+    // State
+    const state = {
+        user: null as User | null,
+        returnUrl: null as string | null,
         loading: false,
-        error: null
-    }),
+        error: null as ApiError | null
+    };
 
-    getters: {
-        isAuthenticated: (state): boolean => !!state.user?.token,
-        isTokenExpired: (state): boolean => {
-            if (!state.user?.tokenExpires) return true;
-            return state.user.tokenExpires < Date.now();
+    // Getters
+    const isAuthenticated = () => authService.isAuthenticated() && !!state.user;
+
+    // Actions
+    const setError = (error: ApiError | null) => {
+        state.error = error;
+    };
+
+    const login = async (credentials: LoginCredentials) => {
+        try {
+            state.loading = true;
+            state.error = null;
+
+            const user = await authService.login(credentials);
+            state.user = user;
+
+            // Redirect to return url or default route
+            router.push(state.returnUrl || '/dashboards/dashboard1');
+        } catch (error) {
+            state.error = error as ApiError;
+            throw error;
+        } finally {
+            state.loading = false;
         }
-    },
+    };
 
-    actions: {
-        setError(error: string | null) {
-            this.error = error;
-        },
-
-        async login(credentials: LoginCredentials) {
-            try {
-                this.loading = true;
-                this.error = null;
-
-                const response = await fetchWrapper.post<ApiResponse<User>>('/users/authenticate', credentials);
-                
-                const user: User = {
-                    ...response.data,
-                    // Set token expiration to 1 hour from now
-                    tokenExpires: Date.now() + 60 * 60 * 1000
-                };
-
-                this.user = user;
-                setStoredAuth({ user });
-
-                // Redirect
-                router.push(this.returnUrl || '/dashboards/dashboard1');
-            } catch (error) {
-                const err = error as ErrorResponse;
-                this.error = err.message || 'Login failed';
-                throw error;
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        async logout() {
-            try {
-                this.loading = true;
-                // Optionally call logout endpoint if needed
-                // await fetchWrapper.post('/users/logout');
-            } catch (error) {
-                console.error('Logout error:', error);
-            } finally {
-                this.user = null;
-                this.error = null;
-                sessionStorage.removeItem(AUTH_STORAGE_KEY);
-                router.push('/');
-                this.loading = false;
-            }
-        },
-
-        clearError() {
-            this.error = null;
-        },
-
-        updateReturnUrl(url: string) {
-            this.returnUrl = url;
+    const logout = async () => {
+        try {
+            state.loading = true;
+            await authService.logout();
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            state.user = null;
+            state.error = null;
+            router.push('/');
+            state.loading = false;
         }
-    }
+    };
+
+    const clearError = () => {
+        state.error = null;
+    };
+
+    const updateReturnUrl = (url: string) => {
+        state.returnUrl = url;
+    };
+
+    return {
+        // State
+        ...state,
+
+        // Getters
+        isAuthenticated,
+
+        // Actions
+        setError,
+        login,
+        logout,
+        clearError,
+        updateReturnUrl
+    };
 });
+
+// Add persistence plugin configuration
+useAuthStore.$persist = {
+    enabled: true,
+    storage: window.localStorage,
+    paths: ['user', 'returnUrl']
+};

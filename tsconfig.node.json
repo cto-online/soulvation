@@ -8,10 +8,10 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
     "strict": true,
-    "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "outDir": "dist"
   },
   "include": ["vite.config.*"]
 }

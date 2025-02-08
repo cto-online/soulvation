@@ -21,7 +21,8 @@
       "vite/client",
       "vue",
       "vuetify",
-      "pinia"
+      "pinia",
+      "@vue/runtime-core"
     ],
     "allowJs": true,
     "checkJs": true,

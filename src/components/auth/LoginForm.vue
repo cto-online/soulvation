@@ -16,18 +16,28 @@ const passwordRules = ref([
     (v: string) => !!v || 'Password is required',
     (v: string) => (v && v.length <= 10) || 'Password must be less than 10 characters'
 ]);
-const emailRules = ref([(v: string) => !!v || 'E-mail is required', (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid']);
+const emailRules = ref([
+    (v: string) => !!v || 'E-mail is required',
+    (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+]);
 
-function validate(values: any, { setErrors }: any) {
+async function validate(values: any, { setErrors }: any) {
     const authStore = useAuthStore();
-    return authStore.login(username.value, password.value).catch((error) => setErrors({ apiError: error }));
+    try {
+        await authStore.login({
+            username: username.value,
+            password: password.value
+        });
+    } catch (error) {
+        setErrors({ apiError: error });
+    }
 }
 </script>
 
 <template>
     <v-row class="d-flex mb-3">
         <v-col cols="6" sm="6" class="pr-2">
-            <v-btn variant="outlined" size="large"  class="border text-subtitle-1 hover-link-primary" block>
+            <v-btn variant="outlined" size="large" class="border text-subtitle-1 hover-link-primary" block>
                 <img :src="google" height="16" class="mr-2" alt="google" />
                 Google
             </v-btn>
@@ -45,7 +55,7 @@ function validate(values: any, { setErrors }: any) {
         </div>  
     </div>
     <Form @submit="validate" v-slot="{ errors, isSubmitting }" class="mt-5">
-        <v-label class="font-weight-semibold pb-2 ">Username</v-label>
+        <v-label class="font-weight-semibold pb-2">Username</v-label>
         <VTextField
             v-model="username"
             :rules="emailRules"
@@ -53,7 +63,7 @@ function validate(values: any, { setErrors }: any) {
             required
             hide-details="auto"
         ></VTextField>
-        <v-label class="font-weight-semibold pb-2 ">Password</v-label>
+        <v-label class="font-weight-semibold pb-2">Password</v-label>
         <VTextField
             v-model="password"
             :rules="passwordRules"
@@ -64,12 +74,12 @@ function validate(values: any, { setErrors }: any) {
         ></VTextField>
         <div class="d-flex flex-wrap align-center my-3 ml-n2">
             <v-checkbox class="pe-2" v-model="checkbox" :rules="[(v:any) => !!v || 'You must agree to continue!']" required hide-details color="primary">
-                <template v-slot:label class="font-weight-medium">Remeber this Device</template>
+                <template v-slot:label class="font-weight-medium">Remember this Device</template>
             </v-checkbox>
             <div class="ml-sm-auto">
-                <RouterLink to="" class="text-primary text-decoration-none font-weight-medium"
-                    >Forgot Password ?</RouterLink
-                >
+                <RouterLink to="" class="text-primary text-decoration-none font-weight-medium">
+                    Forgot Password?
+                </RouterLink>
             </div>
         </div>
         <v-btn size="large" :loading="isSubmitting" color="primary" :disabled="valid" block type="submit" flat>Sign In</v-btn>
