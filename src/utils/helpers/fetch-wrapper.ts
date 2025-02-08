@@ -19,12 +19,19 @@ export interface ErrorResponse {
     status: number;
 }
 
+// Retry configuration
+const RETRY_COUNT = 3;
+const RETRY_DELAY = 1000; // ms
+
 // Create axios instance with default config
 const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    // Update baseURL to point to Kong Gateway
+    baseURL: import.meta.env.VITE_KONG_URL || 'http://localhost:8000',
     timeout: 15000,
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        // Add Kong-specific headers
+        'X-Request-ID': crypto.randomUUID()
     }
 });
 
@@ -35,12 +42,36 @@ api.interceptors.request.use(
         if (user?.token) {
             config.headers.set('Authorization', `Bearer ${user.token}`);
         }
+
+        // Add Kong authentication key if available
+        const kongApiKey = import.meta.env.VITE_KONG_API_KEY;
+        if (kongApiKey) {
+            config.headers.set('apikey', kongApiKey);
+        }
+
         return config;
     },
     (error: AxiosError) => {
         return Promise.reject(error);
     }
 );
+
+// Helper function for retry logic
+const retryRequest = async (
+    error: AxiosError,
+    retryCount: number = 0
+): Promise<AxiosResponse> => {
+    // Only retry on network errors or 5xx responses
+    if (
+        retryCount < RETRY_COUNT &&
+        (!error.response || (error.response.status >= 500 && error.response.status < 600))
+    ) {
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * Math.pow(2, retryCount)));
+        const config = error.config as AxiosRequestConfig;
+        return api.request(config).catch(err => retryRequest(err, retryCount + 1));
+    }
+    return Promise.reject(error);
+};
 
 // Response interceptor
 api.interceptors.response.use(
@@ -53,8 +84,6 @@ api.interceptors.response.use(
         // Handle unauthorized errors
         if (error.response?.status === 401) {
             if (user) {
-                // Since we don't have refresh token functionality yet,
-                // we'll just logout on 401
                 logout();
             }
         }
@@ -64,13 +93,19 @@ api.interceptors.response.use(
             logout();
         }
 
-        // Format error response
-        const errorResponse: ErrorResponse = {
-            message: error.response?.data?.message || error.message || 'An error occurred',
-            status: error.response?.status || 500
-        };
+        // Try to retry the request if applicable
+        try {
+            const response = await retryRequest(error);
+            return response;
+        } catch (retryError) {
+            // Format error response
+            const errorResponse: ErrorResponse = {
+                message: error.response?.data?.message || error.message || 'An error occurred',
+                status: error.response?.status || 500
+            };
 
-        return Promise.reject(errorResponse);
+            return Promise.reject(errorResponse);
+        }
     }
 );
 

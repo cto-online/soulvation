@@ -8,6 +8,7 @@
     pkgs.nodejs_20
     pkgs.sudo
     pkgs.unzip
+    pkgs.docker-compose
   ];
   services.docker.enable = true;
   # Sets environment variables in the workspace

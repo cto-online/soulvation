@@ -1,0 +1,106 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: medusa-service
+    url: https://your-medusa-app.railway.app
+    routes:
+      - name: medusa-api
+        paths:
+          - /medusa
+        strip_path: true
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 60
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Version
+            - Content-Length
+            - Content-MD5
+            - Content-Type
+            - Date
+            - Authorization
+          exposed_headers:
+            - X-Auth-Token
+          credentials: true
+          max_age: 3600
+          preflight_continue: false
+
+  - name: strapi-service
+    url: https://your-strapi-app.railway.app
+    routes:
+      - name: strapi-api
+        paths:
+          - /strapi
+        strip_path: true
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 60
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Version
+            - Content-Length
+            - Content-MD5
+            - Content-Type
+            - Date
+            - Authorization
+          exposed_headers:
+            - X-Auth-Token
+          credentials: true
+          max_age: 3600
+          preflight_continue: false
+
+plugins:
+  - name: key-auth
+    config:
+      key_names:
+        - apikey
+      hide_credentials: true
+      key_in_body: false
+      run_on_preflight: true
+  - name: prometheus
+    config:
+      status_codes: true
+      latency: true
+      bandwidth: true
+      upstream_health: true
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - X-Request-ID:$(uuid)
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - X-Kong-Gateway:true
+  - name: proxy-cache
+    config:
+      content_type:
+        - application/json
+      cache_ttl: 300
+      strategy: memory
