@@ -252,7 +252,7 @@ export default defineComponent({
           }
         ],
         quote: {
-          text: 'The future of web development lies in creating seamless, performant experiences that adapt to users' needs.',
+          text: "The future of web development lies in creating seamless, performant experiences that adapt to users' needs.",
           author: 'John Smith',
           source: 'Web Development Summit 2024'
         },
@@ -288,7 +288,7 @@ export default defineComponent({
           name: 'Emily Davis',
           date: '5 hours ago',
           avatar: '@/assets/images/avatars/4.jpg',
-          content: 'The section about web performance optimization really resonated with me. It's becoming increasingly important in modern web development.'
+          content: "The section about web performance optimization really resonated with me. It's becoming increasingly important in modern web development."
         }
       ],
       commentForm: {

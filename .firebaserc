@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "soulvation-d5796"
-  }
+  },
+  "targets": {
+    "soulvation-d5796": {
+      "hosting": {
+        "production": [
+          "soulvation-co"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

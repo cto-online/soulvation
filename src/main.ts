@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
@@ -85,11 +86,15 @@ const vuetify = createVuetify({
   }
 })
 
+// Create and configure Pinia
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
 // Create and configure the app
 const app = createApp(App)
 
 // Use plugins
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(vuetify)
 app.use(VueApexCharts)

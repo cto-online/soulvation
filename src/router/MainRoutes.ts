@@ -5,8 +5,8 @@ const MainRoutes: RouteRecordRaw = {
   component: () => import('@/layouts/BaseLayout.vue'),
   children: [
     {
-      name: 'Dashboard',
-      path: '/dashboard',
+      name: 'Dashboard1',
+      path: 'dashboard1',
       component: () => import('@/views/dashboards/dashboard1/index.vue'),
       meta: {
         title: 'Dashboard',

@@ -1,3 +1,7 @@
+// Core variables
+@use 'sass:math';
+@use 'sass:color';
+
 // Colors
 $primary: #1976d2;
 $secondary: #424242;
@@ -13,12 +17,79 @@ $font-size-base: 16px;
 $line-height-base: 1.5;
 
 // Spacing
-$spacing-unit: 8px;
-$container-padding: $spacing-unit * 2;
+$spacer: 4px;
+$spacers: (
+  0: 0,
+  1: $spacer,
+  2: $spacer * 2,
+  3: $spacer * 3,
+  4: $spacer * 4,
+  5: $spacer * 5,
+  6: $spacer * 6,
+  7: $spacer * 7,
+  8: $spacer * 8,
+  9: $spacer * 9,
+  10: $spacer * 10
+);
 
 // Breakpoints
-$breakpoint-xs: 0;
-$breakpoint-sm: 600px;
-$breakpoint-md: 960px;
-$breakpoint-lg: 1280px;
-$breakpoint-xl: 1920px;
+$breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 960px,
+  lg: 1280px,
+  xl: 1920px
+);
+
+// Grid
+$grid-columns: 12;
+$grid-gutter: $spacer * 6;
+$grid-gutters: (
+  xs: $spacer * 2,
+  sm: $spacer * 3,
+  md: $spacer * 4,
+  lg: $spacer * 6,
+  xl: $spacer * 8
+);
+
+// Border radius
+$border-radius-root: 4px;
+$border-radius-sm: 2px;
+$border-radius-lg: 8px;
+$border-radius-xl: 12px;
+$border-radius-pill: 9999px;
+
+// Transitions
+$transition-duration: 0.28s;
+$transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Z-index
+$z-index-drawer: 3;
+$z-index-fab: 4;
+$z-index-modal: 1000;
+$z-index-menu: 8;
+$z-index-tooltip: 10;
+
+// Shadows
+$shadow-key-umbra: rgba(0, 0, 0, 0.2);
+$shadow-key-penumbra: rgba(0, 0, 0, 0.14);
+$shadow-key-ambient: rgba(0, 0, 0, 0.12);
+
+// Export CSS variables
+:root {
+  --primary: #{$primary};
+  --secondary: #{$secondary};
+  --accent: #{$accent};
+  --error: #{$error};
+  --info: #{$info};
+  --success: #{$success};
+  --warning: #{$warning};
+  
+  --font-family: #{$font-family};
+  --font-size-base: #{$font-size-base};
+  --line-height-base: #{$line-height-base};
+  
+  --border-radius: #{$border-radius-root};
+  --transition-duration: #{$transition-duration};
+  --transition-timing: #{$transition-timing-function};
+}

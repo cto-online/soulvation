@@ -1,8 +1,19 @@
 <template>
   <v-app>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" />
+        <suspense>
+          <template #default>
+            <component :is="Component" :key="route.path" />
+          </template>
+          <template #fallback>
+            <v-container class="fill-height">
+              <v-row justify="center" align="center">
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              </v-row>
+            </v-container>
+          </template>
+        </suspense>
       </transition>
     </router-view>
 
@@ -39,42 +50,45 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onUnmounted, onErrorCaptured } from 'vue'
 import { useTheme } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { useLayoutStore } from '@/stores/layout'
+import { useRouter } from 'vue-router'
 
-export default defineComponent({
-  name: 'App',
+const theme = useTheme()
+const layoutStore = useLayoutStore()
+const router = useRouter()
+const { snackbar, loading } = storeToRefs(layoutStore)
 
-  setup() {
-    const theme = useTheme()
-    const layoutStore = useLayoutStore()
-    const { snackbar, loading } = storeToRefs(layoutStore)
+// Watch for system color scheme changes
+const darkThemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+  theme.global.name.value = e.matches ? 'dark' : 'light'
+}
 
-    // Watch for system color scheme changes
-    const darkThemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      theme.global.name.value = e.matches ? 'dark' : 'light'
-    }
+// Initial check
+handleThemeChange(darkThemeMediaQuery)
 
-    // Initial check
-    handleThemeChange(darkThemeMediaQuery)
+// Add listener for changes
+darkThemeMediaQuery.addEventListener('change', handleThemeChange)
 
-    // Add listener for changes
-    darkThemeMediaQuery.addEventListener('change', handleThemeChange)
-
-    // Cleanup
-    onUnmounted(() => {
-      darkThemeMediaQuery.removeEventListener('change', handleThemeChange)
-    })
-
-    return {
-      snackbar,
-      loading
-    }
+// Error handling
+onErrorCaptured((error: unknown) => {
+  console.error('App error:', error)
+  snackbar.value = {
+    show: true,
+    text: 'An error occurred. Please try again.',
+    color: 'error',
+    timeout: 5000
   }
+  return false // prevent error from propagating
+})
+
+// Cleanup
+onUnmounted(() => {
+  darkThemeMediaQuery.removeEventListener('change', handleThemeChange)
 })
 </script>
 

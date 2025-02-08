@@ -32,7 +32,7 @@
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="dashboard"
-          to="/dashboard"
+          to="/dashboard/dashboard1"
         ></v-list-item>
 
         <!-- UI Elements -->
@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'

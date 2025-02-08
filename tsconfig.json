@@ -1,27 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "strict": true,
+    "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
     "noEmit": true,
-    "jsx": "preserve",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client", "node"],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "esModuleInterop": true
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": [
+      "node",
+      "vite/client",
+      "vue",
+      "vuetify",
+      "pinia"
+    ],
+    "allowJs": true,
+    "checkJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.ts",
@@ -30,5 +35,9 @@
     "src/**/*.vue",
     "vite.config.ts"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

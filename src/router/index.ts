@@ -7,7 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard'
+      redirect: '/dashboard/dashboard1'
     },
     MainRoutes,
     AuthRoutes,
@@ -32,6 +32,11 @@ const router = createRouter({
 
 // Navigation guards
 router.beforeEach((to, from, next) => {
+  // Skip authentication in development
+  if (import.meta.env.DEV) {
+    return next()
+  }
+
   // Add any authentication logic here
   const publicPages = ['/auth/login', '/auth/register', '/auth/forgot-password']
   const authRequired = !publicPages.includes(to.path)

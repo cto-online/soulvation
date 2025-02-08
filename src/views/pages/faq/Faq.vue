@@ -121,7 +121,7 @@ export default defineComponent({
         {
           category: 'pricing',
           question: 'Do you offer refunds?',
-          answer: 'We offer a 30-day money-back guarantee for all our plans. If you're not satisfied, contact our support team within 30 days of purchase.'
+          answer: "We offer a 30-day money-back guarantee for all our plans. If you're not satisfied, contact our support team within 30 days of purchase."
         },
         {
           category: 'account',
