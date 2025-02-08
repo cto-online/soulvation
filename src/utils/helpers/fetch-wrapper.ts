@@ -1,55 +1,93 @@
 import { useAuthStore } from '@/stores/auth';
+import axios, { 
+    AxiosError, 
+    AxiosInstance, 
+    AxiosRequestConfig, 
+    AxiosResponse,
+    InternalAxiosRequestConfig
+} from 'axios';
 
-export const fetchWrapper = {
-    get: request('GET'),
-    post: request('POST'),
-    put: request('PUT'),
-    delete: request('DELETE')
-};
-
-function request(method: string) {
-    return (url: any, body?: any) => {
-        const requestOptions: any = {
-            method,
-            headers: authHeader(url)
-        };
-        if (body) {
-            requestOptions.headers['Content-Type'] = 'application/json';
-            requestOptions.body = JSON.stringify(body);
-        }
-        return fetch(url, requestOptions).then(handleResponse);
-    };
+// Types
+export interface ApiResponse<T = any> {
+    data: T;
+    message?: string;
+    status: number;
 }
 
-// helper functions
+export interface ErrorResponse {
+    message: string;
+    status: number;
+}
 
-function authHeader(url: any) {
-    // return auth header with jwt if user is logged in and request is to the api url
-    const { user } = useAuthStore();
-    const isLoggedIn = !!user?.token;
-    const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
-    if (isLoggedIn && isApiUrl) {
-        return { Authorization: `Bearer ${user.token}` };
-    } else {
-        return {};
+// Create axios instance with default config
+const api: AxiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    timeout: 15000,
+    headers: {
+        'Content-Type': 'application/json'
     }
-}
+});
 
-function handleResponse(response: any) {
-    return response.text().then((text: any) => {
-        const data = text && JSON.parse(text);
+// Request interceptor
+api.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+        const { user } = useAuthStore();
+        if (user?.token) {
+            config.headers.set('Authorization', `Bearer ${user.token}`);
+        }
+        return config;
+    },
+    (error: AxiosError) => {
+        return Promise.reject(error);
+    }
+);
 
-        if (!response.ok) {
-            const { user, logout } = useAuthStore();
-            if ([401, 403].includes(response.status) && user) {
-                // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
+// Response interceptor
+api.interceptors.response.use(
+    (response: AxiosResponse) => {
+        return response;
+    },
+    async (error: AxiosError<{ message?: string }>) => {
+        const { user, logout } = useAuthStore();
+        
+        // Handle unauthorized errors
+        if (error.response?.status === 401) {
+            if (user) {
+                // Since we don't have refresh token functionality yet,
+                // we'll just logout on 401
                 logout();
             }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
+        }
+        
+        // Handle forbidden errors
+        if (error.response?.status === 403) {
+            logout();
         }
 
-        return data;
-    });
-}
+        // Format error response
+        const errorResponse: ErrorResponse = {
+            message: error.response?.data?.message || error.message || 'An error occurred',
+            status: error.response?.status || 500
+        };
+
+        return Promise.reject(errorResponse);
+    }
+);
+
+// API wrapper with typed methods
+export const fetchWrapper = {
+    get: <T>(url: string, config?: AxiosRequestConfig) => 
+        api.get<T>(url, config).then(response => response.data),
+    
+    post: <T>(url: string, data?: any, config?: AxiosRequestConfig) => 
+        api.post<T>(url, data, config).then(response => response.data),
+    
+    put: <T>(url: string, data?: any, config?: AxiosRequestConfig) => 
+        api.put<T>(url, data, config).then(response => response.data),
+    
+    delete: <T>(url: string, config?: AxiosRequestConfig) => 
+        api.delete<T>(url, config).then(response => response.data),
+    
+    // Helper method for handling multiple concurrent requests
+    all: <T>(promises: Promise<T>[]) => Promise.all(promises)
+};

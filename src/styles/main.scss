@@ -1,0 +1,30 @@
+// Use modern SASS syntax
+@use 'variables' as *;
+@use 'settings' as *;
+
+// Global styles
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+}
+
+#app {
+  height: 100%;
+}
+
+// Add any additional global styles below
+.container {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: $container-padding;
+}
+
+.shadow {
+  &-1 { box-shadow: $shadow-1; }
+  &-2 { box-shadow: $shadow-2; }
+  &-3 { box-shadow: $shadow-3; }
+}

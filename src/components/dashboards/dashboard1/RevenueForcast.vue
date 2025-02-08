@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useTheme } from 'vuetify';
 
+// Types
 interface YearlyData {
   year: number;
   data: number[];
@@ -19,32 +20,38 @@ interface Props {
   loading?: boolean;
 }
 
+const props = withDefaults(defineProps<Props>(), {
+  data: undefined,
+  loading: false
+});
+
 const theme = useTheme();
 const chartError = ref<string | null>(null);
 
-const props = withDefaults(defineProps<Props>(), {
-  data: () => ({
-    years: [
-      {
-        year: 2024,
-        data: [100, 75, 80, 40, 20, 40, 0, 25],
-        color: theme.current.value.colors.primary
-      },
-      {
-        year: 2023,
-        data: [50, 60, 30, 55, 75, 60, 100, 120],
-        color: theme.current.value.colors.error
-      },
-      {
-        year: 2022,
-        data: [35, 45, 40, 50, 35, 55, 40, 45],
-        color: theme.current.value.colors.secondary
-      }
-    ],
-    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
-  }),
-  loading: false
-})
+// Default data with theme colors
+const defaultData = computed<ChartData>(() => ({
+  years: [
+    {
+      year: 2024,
+      data: [100, 75, 80, 40, 20, 40, 0, 25],
+      color: theme.current.value.colors.primary
+    },
+    {
+      year: 2023,
+      data: [50, 60, 30, 55, 75, 60, 100, 120],
+      color: theme.current.value.colors.error
+    },
+    {
+      year: 2022,
+      data: [35, 45, 40, 50, 35, 55, 40, 45],
+      color: theme.current.value.colors.secondary
+    }
+  ],
+  months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
+}));
+
+// Use provided data or fallback to default
+const chartData = computed(() => props.data || defaultData.value);
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -71,7 +78,7 @@ const areachartOptions = computed(() => ({
       }
     }
   },
-  colors: props.data.years.map(year => year.color),
+  colors: chartData.value.years.map(year => year.color),
   dataLabels: {
     enabled: false
   },
@@ -111,7 +118,7 @@ const areachartOptions = computed(() => ({
     }
   },
   xaxis: {
-    categories: props.data.months,
+    categories: chartData.value.months,
     axisBorder: {
       show: false
     },
@@ -133,7 +140,7 @@ const areachartOptions = computed(() => ({
     }
   },
   markers: {
-    strokeColors: props.data.years.map(year => year.color),
+    strokeColors: chartData.value.years.map(year => year.color),
     strokeWidth: 2
   },
   tooltip: {
@@ -144,20 +151,18 @@ const areachartOptions = computed(() => ({
   }
 }));
 
-const chartSeries = computed(() => 
-  props.data.years.map(year => ({
-    name: year.year.toString(),
-    data: year.data
-  }))
-);
+const chartSeries = computed(() => chartData.value.years.map(year => ({
+  name: year.year.toString(),
+  data: year.data
+})));
 </script>
 
 <template>
   <v-card
     elevation="10"
     class="revenue-forecast"
-    :loading="props.loading"
-    :aria-label="'Revenue forecast comparison between years ' + props.data.years.map(y => y.year).join(', ')"
+    :loading="loading"
+    :aria-label="'Revenue forecast comparison between years ' + chartData.years.map(y => y.year).join(', ')"
   >
     <v-card-item>
       <!-- Header -->
@@ -186,7 +191,7 @@ const chartSeries = computed(() =>
         <!-- Legend -->
         <div class="d-flex flex-wrap gap-4">
           <div
-            v-for="year in props.data.years"
+            v-for="year in chartData.years"
             :key="year.year"
             class="d-flex align-center gap-2"
           >
@@ -195,7 +200,7 @@ const chartSeries = computed(() =>
               size="8"
               class="rounded-circle"
               aria-hidden="true"
-            ></v-avatar>
+            />
             <span class="text-medium-emphasis">{{ year.year }}</span>
           </div>
         </div>
@@ -219,12 +224,12 @@ const chartSeries = computed(() =>
     </v-card-item>
 
     <!-- Loading Overlay -->
-    <template v-slot:loader>
+    <template #loader>
       <v-progress-linear
         color="primary"
         height="3"
         indeterminate
-      ></v-progress-linear>
+      />
     </template>
   </v-card>
 </template>

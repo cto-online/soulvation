@@ -1,213 +1,69 @@
-import type { ThemeTypes } from '@/types/themeTypes/ThemeType';
+interface ThemeColors {
+  colors: {
+    primary: string;
+    secondary: string;
+    lightprimary: string;
+    lightsecondary: string;
+    grey100: string;
+  };
+}
 
-const DARK_BLUE_THEME: ThemeTypes = {
-    name: 'DARK_BLUE_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#635BFF',
-        secondary: '#14E9E2',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#29305F',
-        lightsecondary: '#194D59',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_BLUE_THEME: ThemeColors = {
+  colors: {
+    primary: '#1E88E5',
+    secondary: '#3EA0F3',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
 
-const DARK_AQUA_THEME: ThemeTypes = {
-    name: 'DARK_AQUA_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#0074BA',
-        secondary: '#47D7BC',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#103247',
-        lightsecondary: '#0C4339',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_AQUA_THEME: ThemeColors = {
+  colors: {
+    primary: '#0CAEB8',
+    secondary: '#25C4D0',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
 
-const DARK_PURPLE_THEME: ThemeTypes = {
-    name: 'DARK_PURPLE_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#763EBD',
-        secondary: '#95CFD5',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#26153C',
-        lightsecondary: '#09454B',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_PURPLE_THEME: ThemeColors = {
+  colors: {
+    primary: '#7367F0',
+    secondary: '#9E88F8',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
 
-const DARK_GREEN_THEME: ThemeTypes = {
-    name: 'DARK_GREEN_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#0A7EA4',
-        secondary: '#CCDA4E',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#05313F',
-        lightsecondary: '#282917',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_GREEN_THEME: ThemeColors = {
+  colors: {
+    primary: '#28C76F',
+    secondary: '#48DA89',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
 
-const DARK_CYAN_THEME: ThemeTypes = {
-    name: 'DARK_CYAN_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#01C0C8',
-        secondary: '#FB9678',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#003638',
-        lightsecondary: '#40241C',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_CYAN_THEME: ThemeColors = {
+  colors: {
+    primary: '#00B8D9',
+    secondary: '#1AC8E8',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
 
-const DARK_ORANGE_THEME: ThemeTypes = {
-    name: 'DARK_ORANGE_THEME',
-    dark: true,
-    variables: {
-        'border-color': '#333F55',
-        'border-opacity': 1
-    },
-    colors: {
-        primary: '#FA896B',
-        secondary: '#0074BA',
-        info: '#3CACC8',
-        success: '#13DEB9',
-        warning: '#FFAE1F',
-        error: '#ff6692',
-        lightprimary: '#402E32',
-        lightsecondary: '#082E45',
-        lightsuccess: '#1B3C48',
-        lighterror: '#4B313D',
-        lightinfo: '#274A60',
-        lightwarning: '#4D3A2A',
-        textPrimary: '#EAEFF4',
-        textSecondary: '#7C8FAC',
-        borderColor: '#333F55',
-        containerBg: '#1A2537',
-        background: '#1F2A3D',
-        hoverColor: '#333f55',
-        surface: '#1a2537',
-        grey100: '#333F55',
-        grey200: '#465670',
-        light: '#1F2A3D',
-        muted: '#babfc3',
-        darkgray: '#404A5A'
-    }
+export const DARK_ORANGE_THEME: ThemeColors = {
+  colors: {
+    primary: '#FF9F43',
+    secondary: '#FFB976',
+    lightprimary: '#1A2236',
+    lightsecondary: '#1B2A3B',
+    grey100: '#2A3447'
+  }
 };
-
-export { DARK_BLUE_THEME, DARK_AQUA_THEME, DARK_ORANGE_THEME, DARK_PURPLE_THEME, DARK_GREEN_THEME, DARK_CYAN_THEME };
